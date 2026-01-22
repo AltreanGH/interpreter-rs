@@ -14,11 +14,11 @@ impl Parser {
     }
 
     pub fn parse(&mut self) -> Vec<Statement> {
-        let mut statements = Vec::new();
+        let mut stats = Vec::new();
         while let Some(_) = self.tokens.peek() {
-            statements.push(self.parse_statement());
+            stats.push(self.parse_statement());
         };
-        statements
+        stats
     }
 
     fn parse_statement(&mut self) -> Statement {

@@ -1,9 +1,10 @@
-use crate::{lexer::Lexer, parser::Parser};
+use crate::{interpreter::Interpreter, lexer::Lexer, parser::Parser};
 
 mod lexer;
 mod parser;
 mod statement;
 mod token;
+mod interpreter;
 
 fn main() {
     let code = "IN n
@@ -27,7 +28,9 @@ LOOP n DO
     END
   END
 END";
-    let t = Lexer::new(code).lex();
-    Parser::new(t.0).parse();
+    let l = Lexer::new(code).lex();
+    let p = Parser::new(l.0).parse();
+    let vars = vec![0; l.1.len()];
+    Interpreter::new(vars, p).interpret();
     return;
 }
