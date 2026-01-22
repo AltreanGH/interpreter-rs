@@ -1,4 +1,3 @@
-#[derive(Debug)]
 pub enum Token<T> {
     DO,
     END,
@@ -7,16 +6,20 @@ pub enum Token<T> {
     IN,
     OUT,
     ASSIGN,
+    OP(Operation),
+    NUM(usize),
+    VAR(T)
+}
+
+pub enum Operation {
     PLUS,
-    MINUS,
-    NUM { value: usize },
-    VAR { name: T },
+    MINUS
 }
 
 impl<T> Token<T> {
     pub fn map<U, F>(self, f: F) -> Token<U> where F: FnOnce(T) -> U {
         match self {
-            Token::VAR { name } => Token::VAR { name: f(name) },
+            Token::VAR(val) => Token::VAR(f(val)),
             Token::DO => Token::DO,
             Token::END => Token::END,
             Token::WHILE => Token::WHILE,
@@ -24,9 +27,8 @@ impl<T> Token<T> {
             Token::IN => Token::IN,
             Token::OUT => Token::OUT,
             Token::ASSIGN => Token::ASSIGN,
-            Token::PLUS => Token::PLUS,
-            Token::MINUS => Token::MINUS,
-            Token::NUM { value } => Token::NUM { value },
+            Token::OP(op) => Token::OP(op),
+            Token::NUM(val) => Token::NUM(val),
         }
     }
 }
@@ -43,15 +45,13 @@ impl TryFrom<&str> for Token<String> {
             "IN" => Token::IN,
             "OUT" => Token::OUT,
             ":=" => Token::ASSIGN,
-            "+" => Token::PLUS,
-            "-" => Token::MINUS,
+            "+" => Token::OP(Operation::PLUS),
+            "-" => Token::OP(Operation::MINUS),
             token => {
                 if let Ok(val) = token.parse::<usize>() {
-                    Token::NUM { value: val }
+                    Token::NUM(val)
                 } else if token.chars().all(|c| c.is_ascii_alphanumeric()) {
-                    Token::VAR {
-                        name: token.to_string(),
-                    }
+                    Token::VAR(token.to_string())
                 } else {
                     return Err(format!("cannot parse token: {token}"));
                 }

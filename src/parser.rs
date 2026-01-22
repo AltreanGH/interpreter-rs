@@ -1,27 +1,27 @@
-use std::{collections::HashMap, vec};
+use std::{iter::Peekable, vec::IntoIter};
 
-use crate::{
-    statement::Statement,
-    token::{self, Token},
-};
+use crate::{statement::Statement, token::Token};
 
-pub fn parse(lexed: Vec<Token<usize>>) -> Vec<Statement> {
-    // TODO array von Tokens ergeben statement -> LOOP + VAR + DO + ... + END -> Loop
-    // for token in lexed {
-    //     match token {}
-    // }
-    vec![]
+pub struct Parser {
+    tokens: Peekable<IntoIter<Token<usize>>>,
 }
 
-pub fn map_vars(tokens: Vec<Token<String>>) -> (Vec<Token<usize>>, HashMap<String, usize>) {
-    let mut name_map = HashMap::new();
-    let mut mapped_tokens = Vec::with_capacity(tokens.len());
-
-    for token in tokens {
-        mapped_tokens.push(token.map(|name| {
-            let i = name_map.len();
-            *name_map.entry(name).or_insert(i)
-        }));
+impl Parser {
+    pub fn new(tokens: Vec<Token<usize>>) -> Self {
+        Self {
+            tokens: tokens.into_iter().peekable(),
+        }
     }
-    (mapped_tokens, name_map)
+
+    pub fn parse(&mut self) -> Vec<Statement> {
+        let mut statements = Vec::new();
+        while let Some(_) = self.tokens.peek() {
+            statements.push(self.parse_statement());
+        };
+        statements
+    }
+
+    fn parse_statement(&mut self) -> Statement {
+        todo!()
+    }
 }
