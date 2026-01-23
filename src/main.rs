@@ -1,4 +1,4 @@
-use crate::{lexer::Lexer, parser::Parser};
+use crate::{parser::Parser};
 
 mod interpreter;
 mod lexer;
@@ -8,26 +8,90 @@ mod token;
 
 fn main() {
     let code = "
-n := zero + 5
-factorial := zero + 1
-i := zero + 0
+n := zero + 773
 
+isPrime := zero + 1
+
+secondIteration := zero + 0
 LOOP n DO
-  i := i + 1
-  
-  oldFactorial := zero + 0
-  LOOP factorial DO
-    oldFactorial := oldFactorial + 1
-  END
-  
-  factorial := zero + 0
-  LOOP i DO
-    LOOP oldFactorial DO
-      factorial := factorial + 1
-    END
-  END
+	notSecondIteration := zero + 1
+	WHILE secondIteration DO
+		notSecondIteration := zero + 0
+		secondIteration := zero + 0
+		half := half + 1
+	END
+	WHILE notSecondIteration DO
+		notSecondIteration := zero + 0
+		secondIteration := zero + 1
+	END
+END
+
+continue := zero + 1
+divisor := zero + 2
+WHILE continue DO
+
+	LOOP n DO
+		nCopy := nCopy + 1
+	END
+	WHILE nCopy DO
+		LOOP divisor DO
+			nCopyNonZero := zero + 0
+			LOOP nCopy DO
+				nCopyNonZero := nCopyNonZero + 1
+			END
+
+			nCopyIsZero := zero + 1
+			WHILE nCopyNonZero DO
+				nCopy := nCopy - 1
+				nCopyIsZero := zero + 0
+				nCopyNonZero := zero + 0
+			END
+
+			WHILE nCopyIsZero DO
+				hasModulo := zero + 1
+				nCopyIsZero := zero + 0
+			END
+		END
+	END
+
+	hasNoModulo := zero + 1
+	WHILE hasModulo DO
+		hasModulo := zero + 0
+		hasNoModulo := zero + 0
+	END
+	WHILE hasNoModulo DO
+		isPrime := zero + 0
+		hasNoModulo := zero + 0
+	END
+
+	isNotPrime := zero + 1
+	LOOP isPrime DO
+		isNotPrime := zero + 0
+	END
+	LOOP isNotPrime DO
+		continue := zero + 0
+	END
+
+	divisorIsNotHalf := zero + 0
+	LOOP half DO
+		divisorIsNotHalf := divisorIsNotHalf + 1
+	END
+	LOOP divisor DO
+		divisorIsNotHalf := divisorIsNotHalf - 1
+	END
+	divisorIsHalf := zero + 1
+	WHILE divisorIsNotHalf DO
+		divisorIsHalf := zero + 0
+		divisorIsNotHalf := zero + 0
+	END
+	WHILE divisorIsHalf DO
+		divisorIsHalf := zero + 0
+		continue := zero + 0
+	END
+
+	divisor := divisor + 1
 END";
-    let l = Lexer::new(code).lex();
+    let l = lexer::lex(code);
     let p = Parser::new(l.tokens).parse();
     let res = interpreter::interpret(p, l.vars); // TODO use l.var_mapping
     for r in res {
