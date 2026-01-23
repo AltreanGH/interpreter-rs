@@ -1,4 +1,4 @@
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Token<T> {
     DO,
     END,
@@ -11,13 +11,13 @@ pub enum Token<T> {
     VAR(T),
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Iteration {
     LOOP,
     WHILE,
 }
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub enum Operation {
     PLUS,
     MINUS,
@@ -62,7 +62,7 @@ impl TryFrom<&str> for Token<String> {
                 } else if token.chars().all(|c| c.is_ascii_alphanumeric()) {
                     Token::VAR(token.to_string())
                 } else {
-                    return Err(format!("cannot parse token: {token}"));
+                    return Err(format!("Cannot parse token '{token}'"));
                 }
             }
         };

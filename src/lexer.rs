@@ -14,9 +14,6 @@ pub fn lex(code: String) -> LexingResult {
             .map(|token| Token::try_from(token).unwrap())
             .collect(),
     )
-    // TODO remove unwrap
-    // TODO is it faster to map all vars at the end of inside the iterator?
-    // TODO map Token<String> to Token<usize> (indizes) and create the var array
 }
 
 fn map_vars(tokens: Vec<Token<String>>) -> LexingResult {

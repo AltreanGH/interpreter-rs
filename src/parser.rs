@@ -28,29 +28,28 @@ impl Parser {
     }
 
     fn parse_statement(&mut self) -> Statement {
-        match self.tokens.next().expect("unexpected EOF") {
+        match self.tokens.next().expect("Unexpected EOF") {
             Token::ITER(kind) => self.parse_iteration(kind),
             Token::IN => todo!(),
             Token::OUT => todo!(),
             Token::VAR(var) => self.parse_operation(var),
-            token => todo!(), // TODO panic unexpected token
+            token => panic!("Unexpected token '{:?}'", token)
         }
     }
 
     fn parse_operation(&mut self, output: usize) -> Statement {
-        // TODO catch all missing tokens panics
         assert!(matches!(self.tokens.next(), Some(Token::ASSIGN)));
         let input = match self.tokens.next() {
             Some(Token::VAR(i)) => i,
-            _ => todo!(),
+            token => panic!("Unexpected token '{:?}'", token),
         };
         let operation = match self.tokens.next() {
             Some(Token::OP(op)) => op,
-            _ => todo!(),
+            token => panic!("Unexpected token '{:?}'", token),
         };
         let constant = match self.tokens.next() {
             Some(Token::NUM(i)) => i,
-            _ => todo!(),
+            token => panic!("Unexpected token '{:?}'", token),
         };
         Statement::Assignment {
             output,
@@ -63,7 +62,7 @@ impl Parser {
     fn parse_iteration(&mut self, kind: Iteration) -> Statement {
         let variable = match self.tokens.next() {
             Some(Token::VAR(i)) => i,
-            _ => todo!(),
+            token => panic!("Unexpected token '{:?}'", token),
         };
         assert!(matches!(self.tokens.next(), Some(Token::DO)));
         let content = self.parse();
