@@ -1,4 +1,6 @@
-use crate::{parser::Parser};
+use std::{env, fs};
+
+use crate::parser::Parser;
 
 mod interpreter;
 mod lexer;
@@ -7,94 +9,11 @@ mod statement;
 mod token;
 
 fn main() {
-    let code = "
-n := zero + 5
-
-isPrime := zero + 1
-
-secondIteration := zero + 0
-LOOP n DO
-	notSecondIteration := zero + 1
-	WHILE secondIteration DO
-		notSecondIteration := zero + 0
-		secondIteration := zero + 0
-		half := half + 1
-	END
-	WHILE notSecondIteration DO
-		notSecondIteration := zero + 0
-		secondIteration := zero + 1
-	END
-END
-
-continue := zero + 1
-divisor := zero + 2
-WHILE continue DO
-
-	LOOP n DO
-		nCopy := nCopy + 1
-	END
-	WHILE nCopy DO
-		LOOP divisor DO
-			nCopyNonZero := zero + 0
-			LOOP nCopy DO
-				nCopyNonZero := nCopyNonZero + 1
-			END
-
-			nCopyIsZero := zero + 1
-			WHILE nCopyNonZero DO
-				nCopy := nCopy - 1
-				nCopyIsZero := zero + 0
-				nCopyNonZero := zero + 0
-			END
-
-			WHILE nCopyIsZero DO
-				hasModulo := zero + 1
-				nCopyIsZero := zero + 0
-			END
-		END
-	END
-
-	hasNoModulo := zero + 1
-	WHILE hasModulo DO
-		hasModulo := zero + 0
-		hasNoModulo := zero + 0
-	END
-	WHILE hasNoModulo DO
-		isPrime := zero + 0
-		hasNoModulo := zero + 0
-	END
-
-	isNotPrime := zero + 1
-	LOOP isPrime DO
-		isNotPrime := zero + 0
-	END
-	LOOP isNotPrime DO
-		continue := zero + 0
-	END
-
-	divisorIsNotHalf := zero + 0
-	LOOP half DO
-		divisorIsNotHalf := divisorIsNotHalf + 1
-	END
-	LOOP divisor DO
-		divisorIsNotHalf := divisorIsNotHalf - 1
-	END
-	divisorIsHalf := zero + 1
-	WHILE divisorIsNotHalf DO
-		divisorIsHalf := zero + 0
-		divisorIsNotHalf := zero + 0
-	END
-	WHILE divisorIsHalf DO
-		divisorIsHalf := zero + 0
-		continue := zero + 0
-	END
-
-	divisor := divisor + 1
-END";
-    // TODO read from stdin
-    let l = lexer::lex(code);
-    let p = Parser::new(l.tokens).parse();
-    let res = interpreter::interpret(p, l.var_mapping, l.vars); // TODO use l.var_mapping
+    let path: &str = &env::args().collect::<Vec<String>>()[1];
+    let code = fs::read_to_string(path).unwrap();
+    let lexed = lexer::lex(code);
+    let parsed = Parser::new(lexed.tokens).parse();
+    let res = interpreter::interpret(parsed, lexed.var_mapping, lexed.vars);
     for r in res {
         println!("{}, {}", r.0, r.1);
     }

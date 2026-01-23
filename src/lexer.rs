@@ -8,7 +8,7 @@ pub struct LexingResult {
     pub vars: Vec<usize>,
 }
 
-pub fn lex(code: &str) -> LexingResult {
+pub fn lex(code: String) -> LexingResult {
     map_vars(
         code.split_ascii_whitespace()
             .map(|token| Token::try_from(token).unwrap())
