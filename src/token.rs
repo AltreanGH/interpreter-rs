@@ -1,34 +1,43 @@
+#[derive(PartialEq)]
 pub enum Token<T> {
     DO,
     END,
-    WHILE,
-    LOOP,
+    ITER(Iteration),
     IN,
     OUT,
     ASSIGN,
     OP(Operation),
     NUM(usize),
-    VAR(T)
+    VAR(T),
 }
 
+#[derive(PartialEq)]
+pub enum Iteration {
+    LOOP,
+    WHILE,
+}
+
+#[derive(PartialEq)]
 pub enum Operation {
     PLUS,
-    MINUS
+    MINUS,
 }
 
 impl<T> Token<T> {
-    pub fn map<U, F>(self, f: F) -> Token<U> where F: FnOnce(T) -> U {
+    pub fn map<U, F>(self, f: F) -> Token<U>
+    where
+        F: FnOnce(T) -> U,
+    {
         match self {
-            Token::VAR(val) => Token::VAR(f(val)),
             Token::DO => Token::DO,
             Token::END => Token::END,
-            Token::WHILE => Token::WHILE,
-            Token::LOOP => Token::LOOP,
+            Token::ITER(kind) => Token::ITER(kind),
             Token::IN => Token::IN,
             Token::OUT => Token::OUT,
             Token::ASSIGN => Token::ASSIGN,
             Token::OP(op) => Token::OP(op),
             Token::NUM(val) => Token::NUM(val),
+            Token::VAR(val) => Token::VAR(f(val)),
         }
     }
 }
@@ -40,8 +49,8 @@ impl TryFrom<&str> for Token<String> {
         let res = match token {
             "DO" => Token::DO,
             "END" => Token::END,
-            "WHILE" => Token::WHILE,
-            "LOOP" => Token::LOOP,
+            "WHILE" => Token::ITER(Iteration::WHILE),
+            "LOOP" => Token::ITER(Iteration::LOOP),
             "IN" => Token::IN,
             "OUT" => Token::OUT,
             ":=" => Token::ASSIGN,

@@ -1,4 +1,4 @@
-use crate::token::Operation;
+use crate::token::{Iteration, Operation};
 
 pub enum Statement {
     Assignment {
@@ -7,12 +7,9 @@ pub enum Statement {
         operation: Operation,
         constant: usize,
     },
-    While {
+    Iteration {
         variable: usize,
         content: Vec<Statement>,
+        kind: Iteration,
     },
-    Loop {
-        count: usize,
-        content: Vec<Statement>,
-    }
 }

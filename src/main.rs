@@ -1,15 +1,14 @@
-use crate::{interpreter::Interpreter, lexer::Lexer, parser::Parser};
+use crate::{lexer::Lexer, parser::Parser};
 
+mod interpreter;
 mod lexer;
 mod parser;
 mod statement;
 mod token;
-mod interpreter;
 
 fn main() {
-    let code = "IN n
-OUT factorial
-
+    let code = "
+n := zero + 5
 factorial := zero + 1
 i := zero + 0
 
@@ -29,8 +28,10 @@ LOOP n DO
   END
 END";
     let l = Lexer::new(code).lex();
-    let p = Parser::new(l.0).parse();
-    let vars = vec![0; l.1.len()];
-    Interpreter::new(vars, p).interpret();
+    let p = Parser::new(l.tokens).parse();
+    let res = interpreter::interpret(p, l.vars); // TODO use l.var_mapping
+    for r in res {
+        println!("{}", r);
+    }
     return;
 }
