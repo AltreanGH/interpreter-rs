@@ -1,11 +1,17 @@
+use std::collections::HashMap;
+
 use crate::{
     statement::Statement,
     token::{Iteration, Operation},
 };
 
-pub fn interpret(stats: Vec<Statement>, mut vars: Vec<usize>) -> Vec<usize> {
+pub fn interpret(
+    stats: Vec<Statement>,
+    var_mapping: HashMap<String, usize>,
+    mut vars: Vec<usize>,
+) -> HashMap<String, usize> {
     interpret_level(&stats, &mut vars);
-    vars
+    unmap_vars(vars, var_mapping)
 }
 
 fn interpret_level(stats: &Vec<Statement>, vars: &mut Vec<usize>) {
@@ -52,4 +58,9 @@ fn interpret_iteration(
             }
         }
     };
+}
+
+fn unmap_vars(vars: Vec<usize>, mut var_mapping: HashMap<String, usize>) -> HashMap<String, usize> {
+    var_mapping.values_mut().for_each(|v| *v = vars[*v]);
+    var_mapping
 }

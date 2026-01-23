@@ -8,7 +8,7 @@ mod token;
 
 fn main() {
     let code = "
-n := zero + 773
+n := zero + 5
 
 isPrime := zero + 1
 
@@ -91,11 +91,12 @@ WHILE continue DO
 
 	divisor := divisor + 1
 END";
+    // TODO read from stdin
     let l = lexer::lex(code);
     let p = Parser::new(l.tokens).parse();
-    let res = interpreter::interpret(p, l.vars); // TODO use l.var_mapping
+    let res = interpreter::interpret(p, l.var_mapping, l.vars); // TODO use l.var_mapping
     for r in res {
-        println!("{}", r);
+        println!("{}, {}", r.0, r.1);
     }
     return;
 }
