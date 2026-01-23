@@ -29,7 +29,7 @@ fn interpret_level(stats: &Vec<Statement>, vars: &mut Vec<usize>) {
 fn interpret_assignment(input: usize, constant: &usize, operation: &Operation) -> usize {
     match operation {
         Operation::PLUS => input + constant,
-        Operation::MINUS => input - constant, // TODO panic when would be negative
+        Operation::MINUS => input.checked_sub(*constant).unwrap_or(0),
     }
 }
 
@@ -46,6 +46,10 @@ fn interpret_iteration(
                 interpret_level(content, vars);
             }
         }
-        Iteration::WHILE => todo!(),
+        Iteration::WHILE => {
+            while vars[variable] != 0 {
+                interpret_level(content, vars);
+            }
+        }
     };
 }
