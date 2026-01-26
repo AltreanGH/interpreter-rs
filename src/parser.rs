@@ -38,19 +38,32 @@ impl Parser {
     fn parse_operation(&mut self, output: usize) -> Statement {
         match self.tokens.next() {
             Some(Token::ASSIGN) => {}
-            token => panic!("{}", unexpected_message(token)),
-        }
+            Some(token) => panic!(
+                "Expected ASSIGN after VAR({output}), but found: {:?}",
+                token
+            ),
+            None => panic!("Unexpected end of input while expecting ASSIGN after VAR({output})"),
+        };
         let input = match self.tokens.next() {
             Some(Token::VAR(i)) => i,
-            token => panic!("{}", unexpected_message(token)),
+            Some(token) => panic!(
+                "Expected VAR after ASSIGN in operation, but found: {:?}",
+                token
+            ),
+            None => panic!("Unexpected end of input while expecting VAR after ASSIGN in operation"),
         };
         let operation = match self.tokens.next() {
             Some(Token::OP(op)) => op,
-            token => panic!("{}", unexpected_message(token)),
+            Some(token) => panic!("Expected OP after VAR({input}), but found: {:?}", token),
+            None => panic!("Unexpected end of input while expecting OP after VAR({input})"),
         };
         let constant = match self.tokens.next() {
             Some(Token::NUM(i)) => i,
-            token => panic!("{}", unexpected_message(token)),
+            Some(token) => panic!(
+                "Expected NUM after OP({operation:?}), but found: {:?}",
+                token
+            ),
+            None => panic!("Unexpected end of input while expecting NUM after OP({operation:?})"),
         };
         Statement::Assignment {
             output,
@@ -63,17 +76,23 @@ impl Parser {
     fn parse_iteration(&mut self, kind: Iteration) -> Statement {
         let variable = match self.tokens.next() {
             Some(Token::VAR(i)) => i,
-            token => panic!("{}", unexpected_message(token)),
+            Some(token) => panic!("Expected VAR in iteration, but found: {:?}", token),
+            None => panic!("Unexpected end of input while expecting VAR in iteration"),
         };
         match self.tokens.next() {
             Some(Token::DO) => {}
-            token => panic!("{}", unexpected_message(token)),
-        }
+            Some(token) => panic!("Expected DO after VAR({variable}), but found: {:?}", token),
+            None => panic!("Unexpected end of input while expecting DO after VAR({variable})"),
+        };
         let content = self.parse();
         match self.tokens.next() {
             Some(Token::END) => {}
-            token => panic!("{}", unexpected_message(token)),
-        }
+            Some(token) => panic!(
+                "Expected END after iteration content, but found: {:?}",
+                token
+            ),
+            None => panic!("Unexpected end of input while expecting END after iteration content"),
+        };
         Statement::Iteration {
             variable,
             content,
@@ -83,5 +102,5 @@ impl Parser {
 }
 
 fn unexpected_message(unexpected: Option<Token<usize>>) -> String {
-    return format!("Unexpectded token '{:?}'", unexpected);
+    format!("Unexpected token '{:?}'", unexpected)
 }
