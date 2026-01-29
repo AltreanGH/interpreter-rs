@@ -31,7 +31,7 @@ impl Parser {
         match self.tokens.next().expect("Unexpected EOF") {
             Token::ITER(kind) => self.parse_iteration(kind),
             Token::VAR(var) => self.parse_operation(var),
-            token => panic!("{}", unexpected_message(Some(token))),
+            token => panic!("Unexpected token '{:?}'", Some(token)),
         }
     }
 
@@ -99,8 +99,4 @@ impl Parser {
             kind,
         }
     }
-}
-
-fn unexpected_message(unexpected: Option<Token<usize>>) -> String {
-    format!("Unexpected token '{:?}'", unexpected)
 }
