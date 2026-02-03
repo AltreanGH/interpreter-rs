@@ -53,9 +53,25 @@ fn interpret_iteration(
 ) {
     match kind {
         Iteration::LOOP => {
-            let iterations = vars[variable];
-            for _ in 0..iterations {
-                interpret_level(content, vars);
+            if content.len() == 1
+                && let Statement::Assignment {
+                    output,
+                    op1,
+                    operation,
+                    op2,
+                } = &content[0]
+                && vars[*output] == op1.to_value(vars)
+            {
+                vars[*output] = interpret_assignment(
+                    op1.to_value(vars),
+                    operation,
+                    op2.to_value(vars) * vars[variable],
+                );
+            } else {
+                let iterations = vars[variable];
+                for _ in 0..iterations {
+                    interpret_level(content, vars);
+                }
             }
         }
         Iteration::WHILE => {
@@ -64,6 +80,12 @@ fn interpret_iteration(
             }
         }
     };
+    // LOOP i DO
+    //   a = a + 2
+    // END
+    // a = 2i
+    // TODO optional optimization step
+    // TODO tests
 }
 
 fn unmap_vars(vars: Vec<usize>, mut var_mapping: HashMap<String, usize>) -> HashMap<String, usize> {
