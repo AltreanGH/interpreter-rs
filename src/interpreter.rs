@@ -5,6 +5,8 @@ use crate::{
     token::{Iteration, Operation},
 };
 
+const OPTIMISATIONS: bool = true;
+
 pub fn interpret(
     stats: Vec<Statement>,
     var_mapping: HashMap<String, usize>,
@@ -53,7 +55,8 @@ fn interpret_iteration(
 ) {
     match kind {
         Iteration::LOOP => {
-            if content.len() == 1
+            if OPTIMISATIONS
+                && content.len() == 1
                 && let Statement::Assignment {
                     output,
                     op1,
