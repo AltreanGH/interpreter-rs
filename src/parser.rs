@@ -2,7 +2,7 @@ use std::{iter::Peekable, vec::IntoIter};
 
 use crate::{
     statement::Statement,
-    token::{Iteration, Token},
+    token::{Iteration, Operand, Token},
 };
 
 pub struct Parser {
@@ -45,7 +45,7 @@ impl Parser {
             None => panic!("Unexpected end of input while expecting ASSIGN after VAR({output})"),
         };
         let input = match self.tokens.next() {
-            Some(Token::VAR(i)) => i,
+            Some(Token::VAR(i)) => Operand::VAR(i),
             Some(token) => panic!(
                 "Expected VAR after ASSIGN in operation, but found: {:?}",
                 token
@@ -54,11 +54,11 @@ impl Parser {
         };
         let operation = match self.tokens.next() {
             Some(Token::OP(op)) => op,
-            Some(token) => panic!("Expected OP after VAR({input}), but found: {:?}", token),
-            None => panic!("Unexpected end of input while expecting OP after VAR({input})"),
+            Some(token) => panic!("Expected OP after VAR({:?}), but found: {:?}", input, token),
+            None => panic!("Unexpected end of input while expecting OP after VAR({:?})", input),
         };
         let constant = match self.tokens.next() {
-            Some(Token::NUM(i)) => i,
+            Some(Token::NUM(i)) => Operand::CONST(i),
             Some(token) => panic!(
                 "Expected NUM after OP({operation:?}), but found: {:?}",
                 token
@@ -67,9 +67,9 @@ impl Parser {
         };
         Statement::Assignment {
             output,
-            input,
+            op1: input,
             operation,
-            constant,
+            op2: constant,
         }
     }
 

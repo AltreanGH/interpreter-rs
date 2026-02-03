@@ -19,10 +19,13 @@ fn interpret_level(stats: &Vec<Statement>, vars: &mut Vec<usize>) {
         match statement {
             Statement::Assignment {
                 output,
-                input,
+                op1,
                 operation,
-                constant,
-            } => vars[*output] = interpret_assignment(vars[*input], constant, operation),
+                op2,
+            } => {
+                vars[*output] =
+                    interpret_assignment(op1.to_value(vars), operation, op2.to_value(vars))
+            }
             Statement::Iteration {
                 variable,
                 content,
@@ -32,10 +35,13 @@ fn interpret_level(stats: &Vec<Statement>, vars: &mut Vec<usize>) {
     }
 }
 
-fn interpret_assignment(input: usize, constant: &usize, operation: &Operation) -> usize {
+fn interpret_assignment(op1: usize, operation: &Operation, op2: usize) -> usize {
     match operation {
-        Operation::PLUS => input + constant,
-        Operation::MINUS => input.checked_sub(*constant).unwrap_or(0),
+        Operation::ADD => op1 + op2,
+        Operation::SUB => op1.checked_sub(op2).unwrap_or(0),
+        Operation::MUL => todo!(),
+        Operation::DIV => todo!(),
+        Operation::MOD => todo!(),
     }
 }
 

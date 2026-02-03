@@ -1,11 +1,11 @@
-use crate::token::{Iteration, Operation};
+use crate::token::{Iteration, Operand, Operation};
 
 pub enum Statement {
     Assignment {
         output: usize,
-        input: usize,
+        op1: Operand,
         operation: Operation,
-        constant: usize,
+        op2: Operand,
     },
     Iteration {
         variable: usize,

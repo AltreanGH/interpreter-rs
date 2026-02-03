@@ -17,8 +17,26 @@ pub enum Iteration {
 
 #[derive(Debug, PartialEq)]
 pub enum Operation {
-    PLUS,
-    MINUS,
+    ADD,
+    SUB,
+    MUL,
+    DIV,
+    MOD,
+}
+
+#[derive(Debug)]
+pub enum Operand {
+    CONST(usize),
+    VAR(usize),
+}
+
+impl Operand {
+    pub fn to_value(&self, vars: &Vec<usize>) -> usize {
+        match self {
+            Operand::CONST(val) => *val,
+            Operand::VAR(val) => vars[*val],
+        }
+    }
 }
 
 impl<T> Token<T> {
@@ -48,8 +66,8 @@ impl TryFrom<&str> for Token<String> {
             "WHILE" => Token::ITER(Iteration::WHILE),
             "LOOP" => Token::ITER(Iteration::LOOP),
             ":=" => Token::ASSIGN,
-            "+" => Token::OP(Operation::PLUS),
-            "-" => Token::OP(Operation::MINUS),
+            "+" => Token::OP(Operation::ADD),
+            "-" => Token::OP(Operation::SUB),
             token => {
                 if let Ok(val) = token.parse::<usize>() {
                     Token::NUM(val)
